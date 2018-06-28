@@ -21,7 +21,7 @@ target_string2 = 'Entire home/apt'
 target_column2 = 3
 
 source_counter = 0
-with open('E:/Stayd Archive/United States_Monthly_2018-05-16.csv', encoding='UTF-8', newline='\n' ) as f:
+with open('E:/Stayd Archive/United States_Monthly_2018-05-16.csv', encoding='UTF-8', newline='\n') as f:
     reader = csv.reader(f)
 
     with open('C:/Users/Alex/Dropbox/Stayd/miami.csv', 'w', newline='', encoding="utf-8") as output_file:
@@ -32,9 +32,9 @@ with open('E:/Stayd Archive/United States_Monthly_2018-05-16.csv', encoding='UTF
             if source_counter == 0:
                 writer.writerow(row)
     
-            if ( ( target_string1 in row[target_column1] ) & ( target_string2 in row[target_column2] ) ):
+            if (target_string1 in row[target_column1] ) & ( target_string2 in row[target_column2]):
                 target_counter += 1
-                writer.writerow( row ) #[ s.replace('\n','') for s in row]
+                writer.writerow(row)  # [ s.replace('\n','') for s in row]
 
             source_counter += 1
 
@@ -56,8 +56,8 @@ for index, row in combined_df.iterrows():
     counter += 1
     if counter % 10000 == 0:
         print(counter) 
-    lat2 = radians( row["Latitude"] )
-    lon2 = radians( row["Longitude"] )
+    lat2 = radians(row["Latitude"])
+    lon2 = radians(row["Longitude"])
     dlon = lon2 - lon1
     dlat = lat2 - lat1
     a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
@@ -67,7 +67,7 @@ for index, row in combined_df.iterrows():
     combined_df.at[index, "distance"] = distance
 
 # filters
-distance_df = combined_df.loc[ combined_df["distance"] < 2 ]
+distance_df = combined_df.loc[combined_df["distance"] < 2]
 filtered_df = distance_df.reset_index()
 filtered_df["# Reservations LTM"] = np.NaN
 filtered_df["Res Days LTM"] = np.NaN
@@ -88,7 +88,7 @@ for index, row in filtered_df.iterrows():
             ltm_reservations += filtered_df.loc[r]["Number of Reservations"] 
             ltm_reservation_days += filtered_df.loc[r]["Reservation Days"]
             
-            this_month = datetime.strptime( filtered_df.loc[r]["Reporting Month"], "%Y-%m-%d").date()
+            this_month = datetime.strptime(filtered_df.loc[r]["Reporting Month"], "%Y-%m-%d").date()
             if not earliest_month:
                 earliest_month = this_month
             else:
@@ -110,7 +110,7 @@ for index, row in filtered_df.iterrows():
 filtered_df.to_csv("C:/Users/Alex/Dropbox/Stayd/miami v2.csv")
 base_df = filtered_df
 
-filtered_df = filtered_df.loc[filtered_df["Number of Reviews"] >= 1]  #big filter....
+filtered_df = filtered_df.loc[filtered_df["Number of Reviews"] >= 1]   # big filter....
 filtered_df = filtered_df.loc[filtered_df["# Reservations LTM"] >= 1]
 filtered_df = filtered_df.loc[filtered_df["Occ Rt LTM"] >= 0.2]
 
@@ -123,16 +123,16 @@ width, height = 650, 500
 map = folium.Map(location=[25.803113, -80.185741], zoom_start=14,
                  tiles='OpenStreetMap', width=width, height=height)
 
-heat_dps = filtered_df[ ['Latitude', 'Longitude', 'ADR Norm']].as_matrix()
-heat_dps = filtered_df[ ['Latitude', 'Longitude']].as_matrix()
+heat_dps = filtered_df[['Latitude', 'Longitude', 'ADR Norm']].as_matrix()
+heat_dps = filtered_df[['Latitude', 'Longitude']].as_matrix()
 map.add_child(plugins.HeatMap(heat_dps.tolist(), radius=15))
 
 
 folium.map.Marker(
     [25.799113, -80.175741],
     icon=DivIcon(
-        icon_size=(150,36),
-        icon_anchor=(0,0),
+        icon_size=(150, 36),
+        icon_anchor=(0, 0),
         html='<div style="font-size: 18pt; color:black">Apr 2018</div>',
         )
     ).add_to(map)
